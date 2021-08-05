@@ -1,9 +1,9 @@
 # Optimizing the Selection of Recommendation Carousels with Quantum Computing
 
 This is the repository with the code for the paper "Optimizing the Selection of Recommendation Carousels with Quantum Computing", published at RecSys Late-Breaking Results 2021. 
-Developed by Maurizio Ferrari Dacrema and Nicolò Felicioni, at Politecnico di Milano.
+Developed by **[Maurizio Ferrari Dacrema](https://github.com/maurizioFD)** and **[Nicolò Felicioni](https://github.com/nicolo-felicioni)**, at Politecnico di Milano.
 
-See the websites of our [quantum computing group](https://quantum.polimi.it/) and of our [recommender systems group](http://recsys.deib.polimi.it/) for more information on our team and research activities.
+See the websites of our [Quantum Computing Group](https://quantum.polimi.it/) and of our [Recommender Systems Group](http://recsys.deib.polimi.it/) for more information on our team and research activities.
 
 For information on the requirements and how to install this repository, see the following [Installation](#Installation) section, for information on the structure of the repo and the recommender models see the [Project structure](#Project-structure) section.
 Instructions on how to run the experiments are in section [Run the experiments](#Run-the-experiments). The experiments will run by default locally with a Simulated Annealing solver but it is possible to use the D-Wave quantum annealer. Further details on how to setup the quantum annealer are reported in the [D-Wave Setup](#D-Wave-Setup) section

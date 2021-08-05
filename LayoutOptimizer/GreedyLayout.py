@@ -31,10 +31,10 @@ class CarouselLayoutOptimizer_Greedy():
             recommender_instance.load_model(self._model_folder, file_name=recommender_name + "_best_model.zip")
             self._recommender_instance_list[index] = recommender_instance
             self._recommender_name_list[index] = recommender_name
-            result_dict, _ = self._evaluator_validation.evaluateRecommender(recommender_instance)
+            result_df, _ = self._evaluator_validation.evaluateRecommender(recommender_instance)
 
-            cutoff = list(result_dict.keys())[0]
-            self._recommender_result[index] = result_dict[cutoff][self._metric_to_optimize]
+            cutoff = result_df.index[0]
+            self._recommender_result[index] = result_df.loc[cutoff][self._metric_to_optimize]
 
     def get_layout(self, n_carousels):
         # Sort models
@@ -80,10 +80,10 @@ class CarouselLayoutOptimizer_IncrementalGreedy():
                                                                   exclude_seen = True,
                                                                   carousel_recommender_list = carousel_list)
 
-                result_dict, _ = evaluator_validation.evaluateRecommender(recommender_instance)
+                result_df, _ = evaluator_validation.evaluateRecommender(recommender_instance)
 
-                cutoff = list(result_dict.keys())[0]
-                self._recommender_result[index] = result_dict[cutoff][self._metric_to_optimize]
+                cutoff = result_df.index[0]
+                self._recommender_result[index] = result_df.loc[cutoff][self._metric_to_optimize]
 
             else:
                 self._recommender_result[index] = -np.inf

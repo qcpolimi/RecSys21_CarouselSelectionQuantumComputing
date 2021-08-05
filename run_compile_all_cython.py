@@ -18,7 +18,6 @@ if __name__ == '__main__':
         "Recommenders/MatrixFactorization",
         "Recommenders/Similarity",
         "Recommenders/SLIM",
-        "Recommenders/FeatureWeighting",
     ]
 
 

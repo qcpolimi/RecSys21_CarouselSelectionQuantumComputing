@@ -98,20 +98,21 @@ def read_data_split_and_search(dataset_class,
 
 
     metric_to_optimize = 'MAP'
-    cutoff_list_validation = [10]
-    cutoff_list_test = [5, 10, 20]
+    cutoff_to_optimize = 10
+    cutoff_list = [5, 10, 20, 30, 40, 50, 100]
 
     n_cases = 50
     n_random_starts = int(n_cases/3)
 
-    evaluator_validation = EvaluatorHoldout(URM_validation, cutoff_list=cutoff_list_validation)
-    evaluator_test = EvaluatorHoldout(URM_test, cutoff_list=cutoff_list_test)
+    evaluator_validation = EvaluatorHoldout(URM_validation, cutoff_list=cutoff_list)
+    evaluator_test = EvaluatorHoldout(URM_test, cutoff_list=cutoff_list)
 
 
     runHyperparameterSearch_Collaborative_partial = partial(runHyperparameterSearch_Collaborative,
                                                        URM_train=URM_train,
                                                        URM_train_last_test=URM_train_last_test,
                                                        metric_to_optimize=metric_to_optimize,
+                                                       cutoff_to_optimize=cutoff_to_optimize,
                                                        evaluator_validation_earlystopping=evaluator_validation,
                                                        evaluator_validation=evaluator_validation,
                                                        similarity_type_list = KNN_similarity_to_report_list,
@@ -157,6 +158,7 @@ def read_data_split_and_search(dataset_class,
                                             URM_train = URM_train,
                                             URM_train_last_test = URM_train + URM_validation,
                                             metric_to_optimize = metric_to_optimize,
+                                            cutoff_to_optimize=cutoff_to_optimize,
                                             evaluator_validation = evaluator_validation,
                                             similarity_type_list = KNN_similarity_to_report_list,
                                             evaluator_test = evaluator_test,
@@ -175,6 +177,7 @@ def read_data_split_and_search(dataset_class,
                                             URM_train = URM_train,
                                             URM_train_last_test = URM_train + URM_validation,
                                             metric_to_optimize = metric_to_optimize,
+                                            cutoff_to_optimize=cutoff_to_optimize,
                                             evaluator_validation = evaluator_validation,
                                             similarity_type_list = KNN_similarity_to_report_list,
                                             evaluator_test = evaluator_test,
@@ -207,6 +210,7 @@ def read_data_split_and_search(dataset_class,
                                             URM_train = URM_train,
                                             URM_train_last_test = URM_train + URM_validation,
                                             metric_to_optimize = metric_to_optimize,
+                                            cutoff_to_optimize=cutoff_to_optimize,
                                             evaluator_validation = evaluator_validation,
                                             similarity_type_list = KNN_similarity_to_report_list,
                                             evaluator_test = evaluator_test,
@@ -226,6 +230,7 @@ def read_data_split_and_search(dataset_class,
                                             URM_train = URM_train,
                                             URM_train_last_test = URM_train + URM_validation,
                                             metric_to_optimize = metric_to_optimize,
+                                            cutoff_to_optimize=cutoff_to_optimize,
                                             evaluator_validation = evaluator_validation,
                                             similarity_type_list = KNN_similarity_to_report_list,
                                             evaluator_test = evaluator_test,
@@ -267,7 +272,7 @@ def read_data_split_and_search(dataset_class,
 
         result_loader.generate_latex_results(result_folder_path + "{}_latex_results.txt".format("accuracy_metrics"),
                                            metrics_list = ['RECALL', 'PRECISION', 'MAP', 'NDCG'],
-                                           cutoffs_list = cutoff_list_test,
+                                           cutoffs_list = [cutoff_to_optimize],
                                            table_title = None,
                                            highlight_best = True)
 
@@ -275,7 +280,7 @@ def read_data_split_and_search(dataset_class,
                                            metrics_list = ["NOVELTY", "DIVERSITY_MEAN_INTER_LIST", "COVERAGE_ITEM",
                                                            "DIVERSITY_GINI", "SHANNON_ENTROPY", "COVERAGE_ITEM_CORRECT",
                                                            "COVERAGE_USER_CORRECT", "AVERAGE_POPULARITY"],
-                                           cutoffs_list = cutoff_list_validation,
+                                           cutoffs_list = [cutoff_to_optimize],
                                            table_title = None,
                                            highlight_best = True)
 

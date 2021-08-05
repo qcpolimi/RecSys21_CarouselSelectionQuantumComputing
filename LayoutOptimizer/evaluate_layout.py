@@ -36,9 +36,9 @@ def _evaluate_single_layout(parallel_pool_args, variable_prefix, recommender_ite
                                               exclude_seen=True,
                                               carousel_recommender_list=instance_list[:-1])
 
-    results_dict, results_run_string = evaluator_test.evaluateRecommender(instance_list[-1])
+    results_df, results_run_string = evaluator_test.evaluateRecommender(instance_list[-1])
 
-    return index, results_dict
+    return index, results_df
 
 
 
@@ -64,8 +64,8 @@ def evaluate_layout_parallel(best_samples, recommender_iterator, model_folder_pa
     pool.join()
 
 
-    for index, results_dict in result_list:
-        for metric_name, metric_value in results_dict[cutoff_list_validation].items():
+    for index, results_df in result_list:
+        for metric_name, metric_value in results_df.loc[cutoff_list_validation].iteritems():
             result_dataframe.loc[index, metric_name] = metric_value
 
 

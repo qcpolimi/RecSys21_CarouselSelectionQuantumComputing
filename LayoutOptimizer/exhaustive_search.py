@@ -49,11 +49,11 @@ def _evaluate_single_combination(layout_list, recommender_name_to_index_dict, re
                                                           exclude_seen=True,
                                                           carousel_recommender_list=instance_list[:-1])
 
-        results_dict, results_run_string = evaluator_validation.evaluateRecommender(instance_list[-1])
+        results_df, results_run_string = evaluator_validation.evaluateRecommender(instance_list[-1])
 
         dataframe_row = {
             **{"variable_{}".format(recommender_name): 0 for recommender_name in recommender_name_list},
-            **{metric: value for metric, value in results_dict[cutoff_list_validation].items()},
+            **{metric: value for metric, value in results_df.loc[cutoff_list_validation].iteritems()},
             "cutoff": cutoff_list_validation,
             "evaluation time": time.time() - start_time,
         }

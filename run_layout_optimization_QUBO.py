@@ -124,6 +124,13 @@ if __name__ == '__main__':
 
     UCM_dict = dataSplitter.get_loaded_UCM_dict()
 
+
+    ################################################################################################################
+    ##################
+    ##################          PRECOMPUTE RECOMMENDATIONS FOR ALL MODELS
+    ##################
+    ################################################################################################################
+
     # This object allows to iterate over instances of all recommender models: collaborative, content and hybrids
     recommender_iterator = RecommenderInstanceIterator(recommender_class_list = collaborative_algorithm_list,
                                                        KNN_similarity_list = KNN_similarity_to_report_list,
@@ -134,8 +141,16 @@ if __name__ == '__main__':
 
     compute_global_recommendation_count(recommender_iterator, evaluator_validation_save)
 
+
+    ################################################################################################################
+    ##################
+    ##################          EXHAUSTIVE SEARCH AND GREEDY ALGORITHMS
+    ##################
+    ################################################################################################################
+
+
     if input_flags.exact_search:
-        for n_carousels in range(2,4):
+        for n_carousels in range(2,3):
             try:
 
                 compute_exact_search_multiprocessing(recommender_iterator,
@@ -154,15 +169,6 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-    ################################################################################################################
-    ##################
-    ##################          EXHAUSTIVE SEARCH AND GREEDY ALGORITHMS
-    ##################
-    ################################################################################################################
 
     num_best_to_evaluate = 1
     n_carousels_max = 10
@@ -246,6 +252,8 @@ if __name__ == '__main__':
     result_dataframe_name = "Comparison_QUBO"
     timing_dataframe_name = "Comparison_QUBO_timing"
     result_QUBO_path = result_folder_path + "QUBO_SA_alpha/"
+
+
 
     QUBO_model_dict = {
         # "pearson": QUBOModelSelection_Pearson(recommender_iterator=recommender_iterator,

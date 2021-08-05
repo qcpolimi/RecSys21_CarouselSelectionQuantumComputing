@@ -631,6 +631,7 @@ class ResultFolderLoader(object):
         "COVERAGE_USER":             "\\begin{tabular}{@{}c@{}}Cov. \\\\ User\\end{tabular}",
         "DIVERSITY_GINI":            "\\begin{tabular}{@{}c@{}}Div. \\\\ Gini\\end{tabular}",
         "SHANNON_ENTROPY":           "\\begin{tabular}{@{}c@{}}Div. \\\\ Shannon\\end{tabular}",
+        "AVERAGE_POPULARITY":        "\\begin{tabular}{@{}c@{}}Avg. \\\\ Popularity\\end{tabular}",
         }
 
 
@@ -667,9 +668,12 @@ class ResultFolderLoader(object):
                                           UCM_names_list = self._UCM_names_list
                                           )
 
+    def _get_metric_label(self, metric_name):
+        metric_label = self._METRIC_NAME_TO_LATEX_LABEL_DICT[metric_name] if metric_name in self._METRIC_NAME_TO_LATEX_LABEL_DICT else metric_name
+        return metric_label
 
     def _get_column_name(self, metric_name, cutoff):
-        metric_label = self._METRIC_NAME_TO_LATEX_LABEL_DICT[metric_name] if metric_name in self._METRIC_NAME_TO_LATEX_LABEL_DICT else metric_name
+        metric_label = self._get_metric_label(metric_name)
         return "{}@{}".format(metric_label, cutoff)
 
     def get_metadata(self):
@@ -786,14 +790,14 @@ class ResultFolderLoader(object):
 
         # If there is only a single cutoff, the multilevel columns can be collapsed
         if collapse_multicolumn_if_needed and (len(metrics_list) == 1):
-            result_dataframe.columns = ['@'.join([self._METRIC_NAME_TO_LATEX_LABEL_DICT[col[1]], col[0]]).strip() for col in result_dataframe.columns.values]
+            result_dataframe.columns = ['@'.join([self._get_metric_label(col[1]), col[0]]).strip() for col in result_dataframe.columns.values]
 
         else:
             # Rename columns in such a way that they are nicely printable in latex
             result_dataframe.rename(columns= {col_name: "@ {}".format(col_name) for col_name in result_dataframe.columns.levels[0]},
                                     level = 0, inplace = True)
 
-            result_dataframe.rename(columns= {col_name:self._METRIC_NAME_TO_LATEX_LABEL_DICT[col_name] for col_name in result_dataframe.columns.levels[1]},
+            result_dataframe.rename(columns= {col_name:self._get_metric_label(col_name) for col_name in result_dataframe.columns.levels[1]},
                                     level = 1, inplace = True)
 
 

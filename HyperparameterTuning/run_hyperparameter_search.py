@@ -56,9 +56,7 @@ from Recommenders.KNN.UserKNNCBFRecommender import UserKNNCBFRecommender
 from Recommenders.KNN.ItemKNN_CFCBF_Hybrid_Recommender import ItemKNN_CFCBF_Hybrid_Recommender
 from Recommenders.KNN.UserKNN_CFCBF_Hybrid_Recommender import UserKNN_CFCBF_Hybrid_Recommender
 from Recommenders.FactorizationMachines.LightFMRecommender import LightFMItemHybridRecommender, LightFMUserHybridRecommender
-from Recommenders.FeatureWeighting.Cython.CFW_D_Similarity_Cython import CFW_D_Similarity_Cython
-from Recommenders.FeatureWeighting.Cython.CFW_DVV_Similarity_Cython import CFW_DVV_Similarity_Cython
-from Recommenders.FeatureWeighting.Cython.FBSM_Rating_Cython import FBSM_Rating_Cython
+
 
 ######################################################################
 from skopt.space import Real, Integer, Categorical
@@ -71,136 +69,6 @@ from HyperparameterTuning.SearchAbstractClass import SearchInputRecommenderArgs
 ######################################################################
 
 
-
-
-
-def runHyperparameterSearch_FeatureWeighting(recommender_class, URM_train, W_train, ICM_object, ICM_name, n_cases = None,
-                                             evaluator_validation= None, evaluator_test=None, max_total_time = None,
-                                             metric_to_optimize = None, cutoff_to_optimize = None,
-                                             evaluator_validation_earlystopping = None, resume_from_saved = False, save_model = "best",
-                                             output_folder_path ="result_experiments/",
-                                             similarity_type_list = None):
-
-
-    # If directory does not exist, create
-    if not os.path.exists(output_folder_path):
-        os.makedirs(output_folder_path)
-
-
-
-   ##########################################################################################################
-
-    output_file_name_root = recommender_class.RECOMMENDER_NAME + "_{}".format(ICM_name)
-
-    hyperparameterSearch = SearchBayesianSkopt(recommender_class, evaluator_validation=evaluator_validation, evaluator_test=evaluator_test)
-
-
-    if recommender_class is FBSM_Rating_Cython:
-
-        hyperparameters_range_dictionary = {
-            "topK": Categorical([300]),
-            "n_factors": Integer(1, 5),
-
-            "learning_rate": Real(low = 1e-5, high = 1e-2, prior = 'log-uniform'),
-            "sgd_mode": Categorical(["adam"]),
-            "l2_reg_D": Real(low = 1e-6, high = 1e1, prior = 'log-uniform'),
-            "l2_reg_V": Real(low = 1e-6, high = 1e1, prior = 'log-uniform'),
-            "epochs": Categorical([300]),
-        }
-
-
-        recommender_input_args = SearchInputRecommenderArgs(
-            CONSTRUCTOR_POSITIONAL_ARGS = [URM_train, ICM_object],
-            CONSTRUCTOR_KEYWORD_ARGS = {},
-            FIT_POSITIONAL_ARGS = [],
-            FIT_KEYWORD_ARGS = {"validation_every_n": 5,
-                                "stop_on_validation": True,
-                                "evaluator_object": evaluator_validation_earlystopping,
-                                "lower_validations_allowed": 10,
-                                "validation_metric": metric_to_optimize}
-        )
-
-
-
-
-    if recommender_class is CFW_D_Similarity_Cython:
-
-        hyperparameters_range_dictionary = {
-            "topK": Categorical([300]),
-
-            "learning_rate": Real(low = 1e-5, high = 1e-2, prior = 'log-uniform'),
-            "sgd_mode": Categorical(["adam"]),
-            "l1_reg": Real(low = 1e-3, high = 1e-2, prior = 'log-uniform'),
-            "l2_reg": Real(low = 1e-3, high = 1e-1, prior = 'log-uniform'),
-            "epochs": Categorical([50]),
-
-            "init_type": Categorical(["one", "random"]),
-            "add_zeros_quota": Real(low = 0.50, high = 1.0, prior = 'uniform'),
-            "positive_only_weights": Categorical([True, False]),
-            "normalize_similarity": Categorical([True]),
-
-            "use_dropout": Categorical([True]),
-            "dropout_perc": Real(low = 0.30, high = 0.8, prior = 'uniform'),
-        }
-
-
-        recommender_input_args = SearchInputRecommenderArgs(
-            CONSTRUCTOR_POSITIONAL_ARGS = [URM_train, ICM_object, W_train],
-            CONSTRUCTOR_KEYWORD_ARGS = {},
-            FIT_POSITIONAL_ARGS = [],
-            FIT_KEYWORD_ARGS = {"precompute_common_features":False,     # Reduces memory requirements
-                                "validation_every_n": 5,
-                                "stop_on_validation": True,
-                                "evaluator_object": evaluator_validation_earlystopping,
-                                "lower_validations_allowed": 10,
-                                "validation_metric": metric_to_optimize}
-        )
-
-
-
-
-    if recommender_class is CFW_DVV_Similarity_Cython:
-
-        hyperparameters_range_dictionary = {
-            "topK": Categorical([300]),
-            "n_factors": Integer(1, 2),
-
-            "learning_rate": Real(low = 1e-5, high = 1e-3, prior = 'log-uniform'),
-            "sgd_mode": Categorical(["adam"]),
-            "l2_reg_D": Real(low = 1e-6, high = 1e1, prior = 'log-uniform'),
-            "l2_reg_V": Real(low = 1e-6, high = 1e1, prior = 'log-uniform'),
-            "epochs": Categorical([100]),
-
-            "add_zeros_quota": Real(low = 0.50, high = 1.0, prior = 'uniform'),
-        }
-
-
-        recommender_input_args = SearchInputRecommenderArgs(
-            CONSTRUCTOR_POSITIONAL_ARGS = [URM_train, ICM_object, W_train],
-            CONSTRUCTOR_KEYWORD_ARGS = {},
-            FIT_POSITIONAL_ARGS = [],
-            FIT_KEYWORD_ARGS = {"precompute_common_features":False,     # Reduces memory requirements
-                                "validation_every_n": 5,
-                                "stop_on_validation": True,
-                                "evaluator_object": evaluator_validation_earlystopping,
-                                "lower_validations_allowed": 10,
-                                "validation_metric": metric_to_optimize}
-        )
-
-
-
-
-    ## Final step, after the hyperparameter range has been defined for each type of algorithm
-    hyperparameterSearch.search(recommender_input_args,
-                           hyperparameter_search_space= hyperparameters_range_dictionary,
-                           n_cases = n_cases,
-                           resume_from_saved = resume_from_saved,
-                           save_model = save_model,
-                           max_total_time = max_total_time,
-                           output_folder_path = output_folder_path,
-                           output_file_name_root = output_file_name_root,
-                           metric_to_optimize = metric_to_optimize,
-                           cutoff_to_optimize = cutoff_to_optimize)
 
 
 def runHyperparameterSearch_Hybrid(recommender_class, URM_train, ICM_object, ICM_name, URM_train_last_test = None,

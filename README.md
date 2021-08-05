@@ -15,23 +15,21 @@ Note that this repository requires Python 3.8
 
 First we suggest you create an environment for this project using Anaconda.
 
-First checkout this repository, then enter in the repository folder and run this commands to create and activate a new environment:
-
-If you are using conda:
+Checkout this repository, then enter in the repository folder and run this commands to create and activate a new environment:
 ```console
 conda create -n CarouselEvaluation python=3.8 anaconda
 conda activate CarouselEvaluation
-```
-
-Then install all the requirements and dependencies
-```console
-pip install -r requirements.txt
 ```
 
 In order to compile you must have installed: _gcc_ and _python3 dev_, which can be installed with the following commands:
 ```console
 sudo apt install gcc 
 sudo apt-get install python3-dev
+```
+
+Then install all the requirements and dependencies
+```console
+pip install -r requirements.txt
 ```
 
 At this point you can compile all Cython algorithms by running the following command. The script will compile within the current active environment. The code has been developed for Linux and Windows platforms. During the compilation you may see some warnings. 
@@ -63,6 +61,19 @@ command, which will send a test problem to D-Wave's QPU:
 ```console
 dwave ping
 ```
+
+
+## Run the experiments
+
+See see the following [Installation](#Installation) section for information on how to install this repository.
+After the installation is complete you can run the experiments.
+
+* Run the 'run_hyperparameter_optimization.py' script to perform the hyperparameter optimization of the various algorithms independently. In the script you may select which of the datasets to use. The script will automatically download the data (only possible for MovieLens10M. For the Netflix dataset you will have to download it from the link that will be prompted) and save the optimized models.
+* Run the 'run_layout_optimization_QUBO.py' to run all experiments reported in the paper. The default will run the QUBO selection algorithm with a classical SA solver locally, add the "--use_QPU True" flag if you wish to solve them on the QPU. We suggest you to be careful as it could use up most, if not all, of your monthly free QPU quota. If you wish to run the exact search for an optimal global selection use the "--exact_search True" flag. This is very computationally expensive and will likely require more than a day for more than 4 carousels. 
+The script will create several csv files that contain the results for each setting. The results for the carousel selection will be saved in folder "QUBO_SA_alpha" for each target number of carousels and QUBO model. Lastly, in the same folder you will find files "Summary_table_PRECISION.csv" that will summarize the precision value of all selection strategies.
+
+
+
 
 ## Project structure
 
@@ -115,7 +126,6 @@ It is used by calling the Compute_Similarity class and passing which is the desi
 It is able to compute the following similarities: Cosine, Adjusted Cosine, Jaccard, Tanimoto, Pearson and Euclidean (linear and exponential)
 
 ```python
-
     similarity = Compute_Similarity(URM_train, shrink=shrink, topK=topK, normalize=normalize, similarity = "cosine")
 
     W_sparse = similarity.compute_similarity()
@@ -149,15 +159,5 @@ URM_train, URM_validation, URM_test = dataSplitter.get_holdout_split()
 ```
 
 
-
-
-
-## Run the experiments
-
-See see the following [Installation](#Installation) section for information on how to install this repository.
-After the installation is complete you can run the experiments.
-
-* Run the 'run_hyperparameter_optimization.py' script to perform the hyperparameter optimization of the various algorithms independently. In the script you may select which of the datasets to use. The script will automatically download the data (only possible for MovieLens10M. For the Netflix dataset you will have to download it from the link that will be prompted) and save the optimized models.
-* Run the 'run_layout_optimization_QUBO.py' to run all experiments reported in the paper. The default will run the QUBO selection algorithm with a classical SA solver locally, add the "--use_QPU True" flag if you wish to solve them on the QPU. We suggest you to be careful as it could use up most, if not all, of your monthly free QPU quota. If you wish to run the exact search for an optimal global selection use the "--exact_search True" flag. This is very computationally expensive and will likely require more than a day for more than 4 carousels. 
 
 

@@ -343,7 +343,7 @@ class EvaluatorMultipleCarousels(Evaluator):
                 recommended_items_no_relevant_duplicates[relevant_duplicate_index] = None
 
             results_current_cutoff[EvaluatorMetrics.NDCG.value] += ndcg(recommended_items_no_relevant_duplicates, relevant_items,
-                                                                        relevance=self.get_user_test_ratings(test_user))
+                                                                        relevance=self.get_user_test_ratings(test_user), at=self.cutoff_list_multiple)
 
             results_current_cutoff[CarouselEvaluatorMetrics.NDCG_2D.value] += ndcg_2d(recommended_items_current_cutoff, relevant_items,
                                                                                         relevance=self.get_user_test_ratings(test_user),
